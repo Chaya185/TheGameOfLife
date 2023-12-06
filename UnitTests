@@ -1,0 +1,88 @@
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class GameOfLifeTests {
+
+    @Test
+    public void testInitialization() {
+        implementGrid game = new implementGrid(5);
+        game.initialize();
+        assertFalse(game.getBoard()[0][0]);
+        assertFalse(game.getBoard()[2][2]);
+        assertFalse(game.getBoard()[4][4]);
+    }
+
+    @Test
+    public void testUpdateWithGliderPattern() {
+        implementGrid game = new implementGrid(5);
+        game.board[1][2] = true;
+        game.board[2][3] = true;
+        game.board[3][1] = true;
+        game.board[3][2] = true;
+        game.board[3][3] = true;
+
+        game.initialize();
+        game.update();
+
+        boolean[][] updatedBoard = game.getBoard();
+        assertFalse(updatedBoard[1][2]);
+        assertFalse(updatedBoard[2][3]);
+        assertTrue(updatedBoard[2][1]); // New cell born
+        assertTrue(updatedBoard[3][2]);
+        assertTrue(updatedBoard[3][3]);
+    }
+
+    @Test
+    public void testUpdateWithBlinkerPattern() {
+        implementGrid game = new implementGrid(5);
+        game.board[2][1] = true;
+        game.board[2][2] = true;
+        game.board[2][3] = true;
+
+        game.initialize();
+        game.update();
+
+        boolean[][] updatedBoard = game.getBoard();
+        assertFalse(updatedBoard[2][1]);
+        assertTrue(updatedBoard[2][2]);
+        assertFalse(updatedBoard[2][3]);
+        assertTrue(updatedBoard[1][2]); // New cell born
+        assertTrue(updatedBoard[3][2]); // New cell born
+    }
+
+    @Test
+    public void testUpdateWithEmptyGrid() {
+        implementGrid game = new implementGrid(5);
+        game.initialize();
+        game.update();
+
+        boolean[][] updatedBoard = game.getBoard();
+        assertFalse(updatedBoard[0][0]);
+        assertFalse(updatedBoard[2][2]);
+        assertFalse(updatedBoard[4][4]);
+    }
+
+    @Test
+    public void testUpdateDequeue() {
+        implementGrid game = new implementGrid(5);
+        game.board[2][2] = true;
+        game.initialize();
+        game.updateDequeue();
+
+        assertFalse(game.getBoard()[2][2]); // Cell state should be flipped
+    }
+
+    @Test
+    public void testCountAliveNeighbors() {
+        implementCell[][] cells = new implementCell[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                cells[i][j] = new implementCell(i, j);
+            }
+        }
+        cells[0][0].setAlive(true);
+        cells[0][1].setAlive(true);
+        cells[1][0].setAlive(true);
+
+        assertEquals(2, cells[1][1].countAliveNeighbors(cells));
+    }
